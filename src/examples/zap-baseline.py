@@ -52,7 +52,7 @@ import subprocess
 import sys
 import time
 import traceback
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from datetime import datetime
 from random import randint
 from zapv2 import ZAPv2
@@ -161,7 +161,7 @@ def main(argv):
 
   try:
     opts, args = getopt.getopt(argv,"t:c:u:g:m:r:w:x:l:daijsz:")
-  except getopt.GetoptError, exc:
+  except getopt.GetoptError as exc:
     logging.warning ('Invalid option ' + exc.opt + ' : ' + exc.msg)
     usage()
     sys.exit(3)
@@ -242,7 +242,7 @@ def main(argv):
   elif len(config_url) > 0:
     # load config file from url
     try:
-      load_config(urllib2.urlopen(config_url))
+      load_config(urllib.request.urlopen(config_url))
     except:
       logging.warning ('Failed to read configs from ' + config_url)
       sys.exit(3)
@@ -376,7 +376,7 @@ def main(argv):
             continue
           if not is_in_scope(plugin_id, alert.get('url')):
             continue
-          if (not alert_dict.has_key(plugin_id)):
+          if (plugin_id not in alert_dict):
             alert_dict[plugin_id] = []
           alert_dict[plugin_id].append(alert)
         st += pg
@@ -397,7 +397,7 @@ def main(argv):
           f.write ('# Change WARN to IGNORE to ignore rule or FAIL to fail if rule matches\n')
           f.write ('# Only the rule identifiers are used - the names are just for info\n')
           f.write ('# You can add your own messages to each rule by appending them after a tab on each line.\n')
-          for key, rule in sorted(all_dict.iteritems()):
+          for key, rule in sorted(all_dict.items()):
             f.write (key + '\tWARN\t(' + rule + ')\n')
 
       # print out the passing rules
@@ -406,18 +406,18 @@ def main(argv):
         plugin_id = rule.get('id')
         if plugin_id in blacklist:
           continue
-        if (not alert_dict.has_key(plugin_id)):
+        if (plugin_id not in alert_dict):
           pass_dict[plugin_id] = rule.get('name')
 
       if min_level == levels.index("PASS") and detailed_output:
-        for key, rule in sorted(pass_dict.iteritems()):
+        for key, rule in sorted(pass_dict.items()):
           print ('PASS: ' + rule + ' [' + key + ']')
 
       pass_count = len(pass_dict)
 
       # print out the ignored rules
-      for key, alert_list in sorted(alert_dict.iteritems()):
-        if (config_dict.has_key(key) and config_dict[key] == 'IGNORE'):
+      for key, alert_list in sorted(alert_dict.items()):
+        if (key in config_dict and config_dict[key] == 'IGNORE'):
           user_msg = ''
           if key in config_msg:
             user_msg = config_msg[key]
@@ -425,8 +425,8 @@ def main(argv):
           ignore_count += 1
 
       # print out the info rules
-      for key, alert_list in sorted(alert_dict.iteritems()):
-        if (config_dict.has_key(key) and config_dict[key] == 'INFO') or (not config_dict.has_key(key)) and info_unspecified:
+      for key, alert_list in sorted(alert_dict.items()):
+        if (key in config_dict and config_dict[key] == 'INFO') or (key not in config_dict) and info_unspecified:
           user_msg = ''
           if key in config_msg:
             user_msg = config_msg[key]
@@ -434,8 +434,8 @@ def main(argv):
           info_count += 1
 
       # print out the warning rules
-      for key, alert_list in sorted(alert_dict.iteritems()):
-        if (not config_dict.has_key(key) and not info_unspecified) or (config_dict.has_key(key) and config_dict[key] == 'WARN'):
+      for key, alert_list in sorted(alert_dict.items()):
+        if (key not in config_dict and not info_unspecified) or (key in config_dict and config_dict[key] == 'WARN'):
           user_msg = ''
           if key in config_msg:
             user_msg = config_msg[key]
@@ -443,8 +443,8 @@ def main(argv):
           warn_count += 1
 
       # print out the failing rules
-      for key, alert_list in sorted(alert_dict.iteritems()):
-        if config_dict.has_key(key) and config_dict[key] == 'FAIL':
+      for key, alert_list in sorted(alert_dict.items()):
+        if key in config_dict and config_dict[key] == 'FAIL':
           user_msg = ''
           if key in config_msg:
             user_msg = config_msg[key]
@@ -472,7 +472,8 @@ def main(argv):
     # Stop ZAP
     zap.core.shutdown()
 
-  except IOError as (errno, strerror):
+  except IOError as xxx_todo_changeme:
+    (errno, strerror) = xxx_todo_changeme.args
     logging.warning ('I/O error(' + str(errno) + '): ' + str(strerror))
     traceback.print_exc()
   except:

@@ -28,19 +28,19 @@ class importLogFiles(object):
         """
         This component is optional and therefore the API will only work if it is installed
         """
-        return next(self.zap._request(self.zap.base + 'importLogFiles/view/ImportZAPLogFromFile/', {'FilePath' : filepath}).itervalues())
+        return next(iter(self.zap._request(self.zap.base + 'importLogFiles/view/ImportZAPLogFromFile/', {'FilePath' : filepath}).values()))
 
     def import_mod_security_log_from_file(self, filepath):
         """
         This component is optional and therefore the API will only work if it is installed
         """
-        return next(self.zap._request(self.zap.base + 'importLogFiles/view/ImportModSecurityLogFromFile/', {'FilePath' : filepath}).itervalues())
+        return next(iter(self.zap._request(self.zap.base + 'importLogFiles/view/ImportModSecurityLogFromFile/', {'FilePath' : filepath}).values()))
 
     def import_zap_http_request_response_pair(self, httprequest, httpresponse):
         """
         This component is optional and therefore the API will only work if it is installed
         """
-        return next(self.zap._request(self.zap.base + 'importLogFiles/view/ImportZAPHttpRequestResponsePair/', {'HTTPRequest' : httprequest, 'HTTPResponse' : httpresponse}).itervalues())
+        return next(iter(self.zap._request(self.zap.base + 'importLogFiles/view/ImportZAPHttpRequestResponsePair/', {'HTTPRequest' : httprequest, 'HTTPResponse' : httpresponse}).values()))
 
     def post_mod_security_audit_event(self, auditeventstring=None, apikey=''):
         """
@@ -49,7 +49,7 @@ class importLogFiles(object):
         params = {'apikey' : apikey}
         if auditeventstring is not None:
             params['AuditEventString'] = auditeventstring
-        return next(self.zap._request(self.zap.base + 'importLogFiles/action/PostModSecurityAuditEvent/', params).itervalues())
+        return next(iter(self.zap._request(self.zap.base + 'importLogFiles/action/PostModSecurityAuditEvent/', params).values()))
 
     def other_post_mod_security_audit_event(self, auditeventstring, apikey=''):
         """

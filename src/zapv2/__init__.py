@@ -22,30 +22,30 @@ Client implementation for using the ZAP pentesting proxy remotely.
 __docformat__ = 'restructuredtext'
 
 import json
-import urllib
-from acsrf import acsrf
-from ascan import ascan
-from ajaxSpider import ajaxSpider
-from authentication import authentication
-from authorization import authorization
-from autoupdate import autoupdate
-from brk import brk
-from context import context
-from core import core
-from forcedUser import forcedUser
-from httpSessions import httpSessions
-from importLogFiles import importLogFiles
-from params import params
-from pnh import pnh
-from pscan import pscan
-from reveal import reveal
-from script import script
-from search import search
-from selenium import selenium
-from sessionManagement import sessionManagement
-from spider import spider
-from stats import stats
-from users import users
+import urllib.request, urllib.parse, urllib.error
+from .acsrf import acsrf
+from .ascan import ascan
+from .ajaxSpider import ajaxSpider
+from .authentication import authentication
+from .authorization import authorization
+from .autoupdate import autoupdate
+from .brk import brk
+from .context import context
+from .core import core
+from .forcedUser import forcedUser
+from .httpSessions import httpSessions
+from .importLogFiles import importLogFiles
+from .params import params
+from .pnh import pnh
+from .pscan import pscan
+from .reveal import reveal
+from .script import script
+from .search import search
+from .selenium import selenium
+from .sessionManagement import sessionManagement
+from .spider import spider
+from .stats import stats
+from .users import users
 
 class ZapError(Exception):
     """
@@ -108,9 +108,9 @@ class ZAPv2(object):
         :Parameters:
            - `json_data`: the json data to look at.
         """
-        if type(json_data) == type(list()) and json_data[0] == u'OK':
+        if type(json_data) == type(list()) and json_data[0] == 'OK':
             return json_data
-        raise ZapError(*json_data.values())
+        raise ZapError(*list(json_data.values()))
 
     def urlopen(self, *args, **kwargs):
         """
@@ -121,7 +121,7 @@ class ZAPv2(object):
            - `kwargs`: all other keyword arguments.
         """
         kwargs['proxies'] = self.__proxies
-        return urllib.urlopen(*args, **kwargs).read()
+        return urllib.request.urlopen(*args, **kwargs).read()
 
     def status_code(self, *args, **kwargs):
       """
@@ -132,7 +132,7 @@ class ZAPv2(object):
          - `kwargs`: all other keyword arguments.
       """
       kwargs['proxies'] = self.__proxies
-      return urllib.urlopen(*args, **kwargs).getcode()
+      return urllib.request.urlopen(*args, **kwargs).getcode()
 
     def _request(self, url, get={}):
         """
@@ -142,7 +142,7 @@ class ZAPv2(object):
            - `url`: the url to GET at.
            - `get`: the disctionary to turn into GET variables.
         """
-        return json.loads(self.urlopen(url + '?' + urllib.urlencode(get)))
+        return json.loads(self.urlopen(url + '?' + urllib.parse.urlencode(get)))
 
     def _request_other(self, url, get={}):
         """
@@ -152,4 +152,4 @@ class ZAPv2(object):
            - `url`: the url to GET at.
            - `get`: the disctionary to turn into GET variables.
         """
-        return self.urlopen(url + '?' + urllib.urlencode(get))
+        return self.urlopen(url + '?' + urllib.parse.urlencode(get))

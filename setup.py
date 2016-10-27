@@ -9,7 +9,7 @@ __docformat__ = 'restructuredtext'
 try:
     from setuptools import setup, find_packages
 except ImportError:
-    print "You must have setuptools installed to use setup.py. Exiting..."
+    print("You must have setuptools installed to use setup.py. Exiting...")
     raise SystemExit(1)
 
 
@@ -38,5 +38,6 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Intended Audience :: Developers',
         'Intended Audience :: Information Technology',
-        'Programming Language :: Python'],
+        'Programming Language :: Python :: 2.7 ',
+        ],
 )
